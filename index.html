@@ -103,5 +103,15 @@ async function shareScore(){
   }
 }
 function restart(){startQuiz(category)}function goHome(){clearInterval(timerId);show("home")}
+  const sharedParams = new URLSearchParams(location.search);
+const sharedCategory = sharedParams.get("category");
+const sharedScore = sharedParams.get("score");
+const sharedTotal = sharedParams.get("total");
+
+if (sharedCategory && sharedScore !== null && sharedTotal) {
+  const sharedPct = Math.round(Number(sharedScore) / Number(sharedTotal) * 100);
+  $("notice").textContent =
+    `🛰️ Someone scored ${sharedScore}/${sharedTotal} (${sharedPct}%) in ${sharedCategory} on Smart Quiz for Smart People!`;
+}
 </script>
 </body></html>
