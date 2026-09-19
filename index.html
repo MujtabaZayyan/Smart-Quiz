@@ -75,8 +75,33 @@ function answer(choice,clicked){if(answered)return;answered=true;clearInterval(t
 function timeUp(){answered=true;document.querySelectorAll(".option").forEach((b,i)=>{b.disabled=true;if(i===current[index][2])b.classList.add("correct")});$("bar").style.width=((index+1)/current.length*100)+"%";$("timer").textContent="0.0s";$("next").style.display="block"}
 function nextQuestion(){clearInterval(timerId);index++;if(index<current.length)render();else finish()}
 function finish(){clearInterval(timerId);let pct=Math.round(points/current.length*100);$("score").textContent=`${points}/${current.length}`;$("message").textContent=pct>=80?"Excellent! 🚀":pct>=50?"Good job! Keep improving! 💪":"Keep practicing — you can do it! 🌟";$("notice").textContent="";show("result")}
-async function shareScore(){let pct=Math.round(points/current.length*100);let text=`I scored ${points}/${current.length} (${pct}%) in ${category} on Smart Quiz for Smart People! 🛰️ Can you beat my score?`;
-try{if(navigator.share){await navigator.share({title:"Smart Quiz for Smart People",text:text,url:location.href});$("notice").textContent="Share sheet opened!";}else if(navigator.clipboard){await navigator.clipboard.writeText(text+" "+location.href);$("notice").textContent="Score copied — paste it into WhatsApp or Instagram."; }else $("notice").textContent=text;}catch(e){if(e.name!=="AbortError")$("notice").textContent=text}}
+async function shareScore(){
+  let pct=Math.round(points/current.length*100);
+  let resultUrl=location.origin+location.pathname+
+    "?category="+encodeURIComponent(category)+
+    "&score="+points+
+    "&total="+current.length;
+
+  let text=`I scored ${points}/${current.length} (${pct}%) in ${category} on Smart Quiz for Smart People! 🛰️ Can you beat my score?`;
+
+  try{
+    if(navigator.share){
+      await navigator.share({
+        title:"Smart Quiz for Smart People",
+        text:text,
+        url:resultUrl
+      });
+      $("notice").textContent="Share sheet opened!";
+    }else if(navigator.clipboard){
+      await navigator.clipboard.writeText(text+" "+resultUrl);
+      $("notice").textContent="Score link copied — paste it into WhatsApp or Instagram.";
+    }else{
+      $("notice").textContent=text+" "+resultUrl;
+    }
+  }catch(e){
+    if(e.name!=="AbortError") $("notice").textContent=text;
+  }
+}
 function restart(){startQuiz(category)}function goHome(){clearInterval(timerId);show("home")}
 </script>
 </body></html>
